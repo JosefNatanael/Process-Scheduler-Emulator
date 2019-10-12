@@ -7,6 +7,7 @@
 #define PROCESSSCHEDULER_H_
 
 #include <iostream>
+#include <string>
 using std::cout;
 using std::endl;
 using std::to_string;
