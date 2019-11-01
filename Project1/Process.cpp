@@ -17,19 +17,23 @@ Process::Process(const unsigned int pid, unsigned int execute_time, unsigned int
 {}
 
 const unsigned int Process::get_pid() const {
-	return pid; // TODO
+	// TODO
+	return pid;
 }
 
 unsigned int Process::get_execute_time() const {
-	return execute_time; // TODO
+	// TODO
+	return execute_time;
 }
 
 unsigned int Process::get_priority() const {
-	return priority; // TODO
+	// TODO
+	return priority;
 }
 
 unsigned int Process::get_aging_counter() const {
-	return aging_counter; // TODO
+	// TODO
+	return aging_counter;
 }
 
 // Prints a summary of pid, execute_time, priority, aging_counter
@@ -38,6 +42,11 @@ void Process::print() const {
 		<< "Execution Time Remaining: " << execute_time << "\n"
 		<< "Priority: " << priority << "\n"
 		<< "Aging Counter: " << aging_counter << endl;
+}
+
+void Process::reset_aging_counter() {
+	// TODO
+	aging_counter = 0; 
 }
 
 // Simulate execution of process

@@ -1,6 +1,5 @@
 /*
- * You may add your own helper classes, structs, and functions here.
- * However, do NOT modify the existing Process class declaration.
+ * DO NOT MODIFY!
  */
 
 #ifndef PROCESS_H_
@@ -23,12 +22,13 @@ public:
 	void execute(unsigned int time); // Simulate execution of Process.
 	void wait(unsigned int time); // Simulate waiting of Process in the queue.
 	void promote_priority(); // Increase Process priority by 1.
+	void reset_aging_counter(); // Resets Aging Counter to 0.
 
 private:
-	const unsigned int pid{0}; // Process ID.
-	unsigned int execute_time{0}; // Execution Time remaining for Process.
-	unsigned int priority{0}; // Current Priority level of Process. Note that larger value is higher priority.
-	unsigned int aging_counter{0}; // Counter to keep track of time-elapsed while Process is waiting. Resets whenever aging occurs or Process gets to execute.
+	const unsigned int pid{ 0 }; // Process ID.
+	unsigned int execute_time{ 0 }; // Execution Time remaining for Process.
+	unsigned int priority{ 0 }; // Current Priority level of Process. Note that larger value is higher priority.
+	unsigned int aging_counter{ 0 }; // Counter to keep track of time-elapsed while Process is waiting. Resets whenever aging occurs or Process gets to execute.
 };
 
 #endif /* PROCESS_H_ */

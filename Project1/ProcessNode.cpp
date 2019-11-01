@@ -17,6 +17,6 @@ ProcessNode::ProcessNode(Process* process, ProcessNode* next, ProcessNode* prev)
 
 ProcessNode::~ProcessNode() {
 	// TODO
-	delete process;
+	// ALERT: Destructor of ProcessNode does not deallocate process. It only sets the pointer to nullptr.
 	process = nullptr;
 }
