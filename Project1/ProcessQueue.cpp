@@ -58,8 +58,26 @@ void ProcessQueue::print() const {
 	cout << "================================================================================" << endl;
 }
 
+// Performs Aging on all Processes in ProcessQueue. Extracts and returns a ProcessQueue of Processes with incremented priority (can be empty).
+// Assumptions: can perform aging, i.e. not in max priority queue, and it's higher process/priority queue can perform aging as well.
 ProcessQueue* ProcessQueue::perform_aging(unsigned int time, const unsigned int aging_threshold) {
-	return nullptr; // TODO
+	// TODO
+	ProcessQueue* higherPriorityQueue = new ProcessQueue{};
+	ProcessNode* temp = sentinel->next;
+	while (temp != sentinel) {
+		if (temp->process->get_aging_counter() + time >= aging_threshold) {
+			unsigned int remainingTime = aging_threshold - time - temp->process->get_aging_counter();
+			temp->process->reset_aging_counter();
+			temp->process->wait(remainingTime);
+			temp->process->promote_priority();
+			higherPriorityQueue->enqueue(remove(temp));
+		}
+		else {
+			temp->process->wait(time);
+		}
+		temp = temp->next;
+	}
+	return higherPriorityQueue;
 }
 
 // Simply merge, nothing special added
