@@ -63,6 +63,9 @@ void ProcessQueue::print() const {
 ProcessQueue* ProcessQueue::perform_aging(unsigned int time, const unsigned int aging_threshold) {
 	// TODO
 	ProcessQueue* higherPriorityQueue = new ProcessQueue{};
+	if (aging_threshold == 0) {
+		return higherPriorityQueue;
+	}
 	ProcessNode* temp = sentinel->next;
 	while (temp != sentinel) {
 		if (temp->process->get_aging_counter() + time >= aging_threshold) {

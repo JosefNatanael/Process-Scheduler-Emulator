@@ -52,7 +52,7 @@ void Process::reset_aging_counter() {
 // Simulate execution of process
 void Process::execute(unsigned int time) {
 	// TODO
-	execute_time < time ? execute_time -= time : execute_time = 0;
+	execute_time -= time;
 	aging_counter = 0;
 }
 

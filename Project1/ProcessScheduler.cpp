@@ -7,11 +7,23 @@
 
 #include "ProcessScheduler.h"
 
-// TODO, You may also use initializer list syntax " : ".
-ProcessScheduler::ProcessScheduler(const unsigned int quantum_threshold, const unsigned int max_priority, const unsigned int aging_threshold) {}
+ProcessScheduler::ProcessScheduler(const unsigned int quantum_threshold, const unsigned int max_priority, const unsigned int aging_threshold) 
+	: quantum_threshold(quantum_threshold)
+	, max_priority(max_priority)
+	, aging_threshold(aging_threshold)
+{
+	// TODO
+	priority_queues = new ProcessQueue[max_priority + 1];
+}
 
 ProcessScheduler::~ProcessScheduler() {
 	// TODO
+	delete[] priority_queues;
+	priority_queues = nullptr;
+	if (current_process != nullptr) {
+		delete current_process;
+		current_process = nullptr;
+	}
 }
 
 void ProcessScheduler::print() const {
@@ -48,12 +60,16 @@ void ProcessScheduler::print() const {
 }
 
 bool ProcessScheduler::has_current_process() const {
-	return false; // TODO
+	// TODO
+	return current_process != nullptr;
 }
 
 // Swap out Current Process and reset the quantum_counter, if no Current Process or the newly added Process has higher priority.
 void ProcessScheduler::add_process(unsigned int execute_time, unsigned int priority) {
 	// TODO
+	Process* newProcess = new Process(next_pid, execute_time, priority);
+	++next_pid;
+	priority_queues[priority].enqueue(newProcess);
 }
 
 /*
@@ -68,4 +84,76 @@ void ProcessScheduler::add_process(unsigned int execute_time, unsigned int prior
  */
 void ProcessScheduler::simulate(unsigned int time) {
 	// TODO
+	// i represents the time elapsed
+	int i = 0;
+	while (i < time) {
+		// If current process is empty
+		if (!has_current_process()) {
+			for (int j = max_priority; j >= 0; --j) {
+				if (!priority_queues[j].is_empty()) {
+					current_process = priority_queues[j].dequeue();
+					break;
+				}
+			}
+			// current process is not set yet, then return
+			if (!has_current_process()) {
+				return;
+			}
+		}
+		current_process->execute(1);
+		++quantum_counter;
+		// If the execute time is zero, delete
+		if (current_process->get_execute_time() == 0) {
+			delete current_process;
+			current_process = nullptr;
+			quantum_counter = 0;
+		}
+		// Perform aging
+		for (int j = 0; j < max_priority; ++j) {
+			priority_queues[j+1].merge_back(priority_queues[j].perform_aging(1, aging_threshold));
+		}
+		// Re-find next process if execution of the current process is done (no more process)
+		if (!has_current_process()) {
+			for (int j = max_priority; j >= 0; --j) {
+				if (!priority_queues[j].is_empty()) {
+					current_process = priority_queues[j].dequeue();
+					break;
+				}
+			}
+			// current process is not set yet, then return
+			if (!has_current_process()) {
+				return;
+			}
+		}
+		else {	// it has current process
+			// Only need to check higher priority queues, if found, return it to the end of it's queue
+			if (quantum_threshold == 0 || quantum_counter < quantum_threshold) {
+				Process* newProcess = nullptr;
+				for (int j = max_priority; j > current_process->get_priority(); --j) {
+					if (!priority_queues[j].is_empty()) {
+						newProcess = priority_queues[j].dequeue();
+						break;
+					}
+				}
+				// That means it is found, a higher priority than the current_process, then it needs to be returned back to the queue
+				if (newProcess != nullptr) {
+					priority_queues[current_process->get_priority()].enqueue(current_process);
+					current_process = newProcess;
+				}
+			}
+			// Gonna be kicked back to it's queue, find next candidate
+			else if (quantum_counter == quantum_threshold) {
+				priority_queues[current_process->get_priority()].enqueue(current_process);
+				for (int j = max_priority; j >= 0; --j) {
+					if (!priority_queues[j].is_empty()) {
+						current_process = priority_queues[j].dequeue();
+						break;
+					}
+				}
+			}
+			
+		}
+
+		++i;
+	}
 }
