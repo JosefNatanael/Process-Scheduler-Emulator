@@ -60,8 +60,21 @@ ProcessQueue* ProcessQueue::perform_aging(unsigned int time, const unsigned int 
 	return nullptr; // TODO
 }
 
+// Simply merge, nothing special added
 void ProcessQueue::merge_back(ProcessQueue* process_queue) {
 	// TODO
+	// If nothing to merge, no need to do anything
+	if (process_queue->sentinel->next == process_queue->sentinel) {
+		return;
+	}
+	// Bridging last element to the start of process_queue's first element
+	sentinel->prev->next = process_queue->sentinel->next;
+	process_queue->sentinel->next->prev = sentinel->prev;
+
+	// Bridging sentinel and process_queue's last element
+	process_queue->sentinel->prev->next = sentinel;
+	sentinel->prev = process_queue->sentinel->prev;
+	delete process_queue->sentinel;
 }
 
 // Checks if the process is a nullptr, do nothing.
