@@ -39,6 +39,8 @@ ProcessQueue::~ProcessQueue() {
 		sentinel->next = afterSentinelNext;
 		afterSentinelNext->prev = sentinel;
 	}
+	delete sentinel;
+	sentinel = nullptr;
 }
 
 void ProcessQueue::print() const {
@@ -67,14 +69,21 @@ void ProcessQueue::merge_back(ProcessQueue* process_queue) {
 	if (process_queue->sentinel->next == process_queue->sentinel) {
 		return;
 	}
-	// Bridging last element to the start of process_queue's first element
+
+	// Bridge last element to the start of process_queue's first element
 	sentinel->prev->next = process_queue->sentinel->next;
 	process_queue->sentinel->next->prev = sentinel->prev;
 
-	// Bridging sentinel and process_queue's last element
+	// Bridge sentinel and process_queue's last element
 	process_queue->sentinel->prev->next = sentinel;
 	sentinel->prev = process_queue->sentinel->prev;
-	delete process_queue->sentinel;
+
+	// Cut process_queue's ties
+	process_queue->sentinel->next = process_queue->sentinel;
+	process_queue->sentinel->prev = process_queue->sentinel;
+
+	// Call destructor of process_queue
+	delete process_queue;
 }
 
 // Checks if the process is a nullptr, do nothing.
@@ -119,6 +128,7 @@ bool ProcessQueue::is_empty() const {
 */
 Process* ProcessQueue::remove(ProcessNode* process_node) {
 	// TODO
+	// If invalid process_node or the queue is empty return nullptr
 	if (process_node == nullptr || sentinel->next == sentinel) {
 		return nullptr;
 	}
@@ -128,6 +138,10 @@ Process* ProcessQueue::remove(ProcessNode* process_node) {
 			break;
 		}
 		temp = temp->next;
+	}
+	// If not found, return nullptr
+	if (temp == sentinel) {
+		return nullptr;
 	}
 	Process* toReturn = temp->process;
 	ProcessNode* nextTemp = temp->next;
