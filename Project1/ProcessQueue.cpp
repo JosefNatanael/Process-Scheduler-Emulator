@@ -91,6 +91,7 @@ void ProcessQueue::merge_back(ProcessQueue* process_queue) {
 	// If nothing to merge, no need to do anything
 	if (process_queue->sentinel->next == process_queue->sentinel) {
 		delete process_queue;
+		process_queue = nullptr;
 		return;
 	}
 
