@@ -69,7 +69,7 @@ ProcessQueue* ProcessQueue::perform_aging(unsigned int time, const unsigned int 
 	ProcessNode* temp = sentinel->next;
 	while (temp != sentinel) {
 		if (temp->process->get_aging_counter() + time >= aging_threshold) {
-			unsigned int remainingTime = aging_threshold - time - temp->process->get_aging_counter();
+			unsigned int remainingTime = time + temp->process->get_aging_counter() - aging_threshold;
 			temp->process->reset_aging_counter();
 			temp->process->wait(remainingTime);
 			temp->process->promote_priority();
