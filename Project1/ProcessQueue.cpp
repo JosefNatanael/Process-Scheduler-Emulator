@@ -73,7 +73,9 @@ ProcessQueue* ProcessQueue::perform_aging(unsigned int time, const unsigned int 
 			temp->process->reset_aging_counter();
 			temp->process->wait(remainingTime);
 			temp->process->promote_priority();
-			higherPriorityQueue->enqueue(remove(temp));
+			temp = temp->next;
+			higherPriorityQueue->enqueue(remove(temp->prev));
+			continue;
 		}
 		else {
 			temp->process->wait(time);
@@ -88,6 +90,7 @@ void ProcessQueue::merge_back(ProcessQueue* process_queue) {
 	// TODO
 	// If nothing to merge, no need to do anything
 	if (process_queue->sentinel->next == process_queue->sentinel) {
+		delete process_queue;
 		return;
 	}
 
