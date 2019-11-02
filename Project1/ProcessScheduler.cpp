@@ -104,6 +104,10 @@ void ProcessScheduler::simulate(unsigned int time) {
 	// i represents the time elapsed
 	unsigned int i = 0;
 	while (i < time) {
+		// If quantum threshold is zero, quantum counter will be always zero
+		if (quantum_threshold == 0) {
+			quantum_counter = 0;
+		}
 		// If current process is empty
 		if (!has_current_process()) {
 			for (int j = max_priority; j >= 0; --j) {
@@ -118,9 +122,11 @@ void ProcessScheduler::simulate(unsigned int time) {
 			}
 		}
 		// Check whether it has reached the quantum threshold
-		if (quantum_counter < quantum_threshold) {
+		if (quantum_counter < quantum_threshold || quantum_threshold == 0) {
 			current_process->execute(1);
-			++quantum_counter;
+			if (quantum_threshold != 0) {
+				++quantum_counter;
+			}
 		}
 		// If the execute time is zero, delete
 		if (current_process->get_execute_time() == 0) {
